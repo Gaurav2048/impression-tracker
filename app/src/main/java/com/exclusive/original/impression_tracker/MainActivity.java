@@ -2,6 +2,7 @@ package com.exclusive.original.impression_tracker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,20 +13,28 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.exclusive.original.impression_tracker.Helper.Utils;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    BottomSheetBehavior sheetBehavior;
     RecyclerView impressionRecyclerView;
     LinearLayoutManager layoutManager;
+    ConstraintLayout bottom_sheet;
     Map<Integer, Integer> impressions = new HashMap<>();
+    Button checkImpressions;
 
     int firstCompleteVisiblePosition = 0, lastCompleteVisibleItem ;
     double lastIdleTimeStamp = 0;
@@ -35,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         impressionRecyclerView = findViewById(R.id.impressionRecyclerView);
+        checkImpressions = findViewById(R.id.checkImpressions);
+        bottom_sheet = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
+
 
         layoutManager = new LinearLayoutManager(this);
         impressionRecyclerView.setLayoutManager(layoutManager);
@@ -52,8 +65,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        checkImpressions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView impressionDetail = bottom_sheet.findViewById(R.id.impressionDetail);
+                Iterator iterator = impressions.entrySet().iterator();
+                String impressionData = "";
+                while (iterator.hasNext()){
+                    Map.Entry pair = (Map.Entry)iterator.next();
+                    impressionData += "Item Position :- "+ pair.getKey() +"\n" ;
+                }
+                impressionDetail.setText(impressionData);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
 
+    }
 
+    @Override
+    public void onBackPressed() {
+        if(sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return;
+        }
+        super.onBackPressed();
     }
 
     boolean isRecyclerViewScrollingAfterIdle = false;

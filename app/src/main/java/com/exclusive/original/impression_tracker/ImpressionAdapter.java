@@ -3,6 +3,7 @@ package com.exclusive.original.impression_tracker;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,18 +17,21 @@ public class ImpressionAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+            viewHolder vH = (viewHolder) holder;
+            vH.position.setText(String.valueOf(position));
     }
 
     @Override
     public int getItemCount() {
-        return 14;
+        return 50;
     }
 
-    public class viewHolder extends RecyclerView.ViewHolder{
 
+    public class viewHolder extends RecyclerView.ViewHolder{
+        TextView position;
         public viewHolder(@NonNull View itemView) {
             super(itemView);
+            position = itemView.findViewById(R.id.position);
         }
     }
 
